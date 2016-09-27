@@ -22,12 +22,13 @@ public class Main {
         stmt.execute();
     }
 
-    public static void deleteGame(Connection conn, int gameId)throws SQLException{
+    public static void deleteGame(Connection conn, String gameName)throws SQLException{
 
-        PreparedStatement stmt = conn.prepareStatement("DELETE FROM games WHERE id=?");
-        stmt.setInt(1,gameId);
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM games WHERE text=?");
+        stmt.setString(1,gameName);
         stmt.execute();
     }
+
 
     public static ArrayList<Game> selectGames(Connection conn)throws SQLException{
         ArrayList<Game> gameList = new ArrayList<>();
@@ -35,18 +36,39 @@ public class Main {
 
         ResultSet results = stmt.executeQuery("SELECT * FROM games");
         while (results.next()){
-            int gameId=results.getInt("id");
-            String gameName = results.getString("gameName");
-            String gameGenre = results.getString("gameGenre");
-            String gamePlatform = results.getString("gamePlatform");
-            int releaseYear = results.getInt("releaseYear");
+
+            int id = results.getInt("id");
+            String gameName = results.getString("text");
+            String gameGenre = results.getString("genre");
+            String gamePlatform = results.getString("platform");
+            int releaseYear = results.getInt("release_year");
+
+            /*String gameName = results.getString("game_name");
+            String gameGenre = results.getString("game_genre");
+            String gamePlatform = results.getString("game_platform");
+            int releaseYear = results.getInt("release_year");*/
+            Game game = new Game(id,gameName,gameGenre,gamePlatform,releaseYear);
+            gameList.add(game);
         }
+        return gameList;
     }
 
-    public static void updateGame(Connection conn, int gameId, String gameName,
-                                  String gameGenre, String gamePlatform, int releaseYear){
+    public static void updateGame(Connection conn, String gameName,
+                                  String gameGenre, String gamePlatform, int releaseYear)throws SQLException{
 
+        PreparedStatement stmt = conn.prepareStatement("UPDATE games SET text=?, genre=?,platform=?,release_year=? WHERE text=?");
+        stmt.setString(1,gameName);
+        stmt.setString(2,gameGenre);
+        stmt.setString(3,gamePlatform);
+        stmt.setInt(4, releaseYear);
+        stmt.setString(5,gameName);
+        stmt.execute();
     }
+
+    /*public static void updateDb(Connection conn)throws SQLException{
+        PreparedStatement stmt = conn.prepareStatement("UPDATE games");
+        stmt.execute();
+    }*/
 
     static HashMap<String, User> users = new HashMap<>();
 
@@ -68,11 +90,20 @@ public class Main {
 
                     HashMap m = new HashMap();
 
+                    //update database
+                    //updateDb(conn);
+
+                    //get arraylist and pass to html
+                    ArrayList<Game> games = selectGames(conn);
+                    //m.put("user",user);
+                    m.put("games",games);
+
                     //check if class is null
                     if (user == null) {
                         return new ModelAndView(m, "login.html");
                     } else {
-                        return new ModelAndView(user, "home.html");
+                        return new ModelAndView(m, "home.html");
+
                     }
                 }),
                 new MustacheTemplateEngine());
@@ -128,21 +159,22 @@ public class Main {
                     return "";
                 }));
         Spark.post("/delete-game", ((request, response) -> {
-            int gameId=Integer.parseInt(request.queryParams("gameId"));
+            String gameName=request.queryParams("gameName");
 
-            deleteGame(conn,gameId);
+            deleteGame(conn,gameName);
 
             response.redirect("/");
             return "";
         }));
 
         Spark.post("/edit-game",((request, response) -> {
-            int gameId=Integer.parseInt(request.queryParams("gameId"));
 
             String gameGenre = request.queryParams("gameGenre");
             String gameName = request.queryParams("gameName");
             String gamePlatform = request.queryParams("gamePlatform");
             int gameYear = Integer.parseInt(request.queryParams("gameYear"));
+
+            updateGame(conn,gameName,gameGenre,gamePlatform,gameYear);
 
             response.redirect("/");
             return "";

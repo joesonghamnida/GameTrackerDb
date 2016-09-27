@@ -33,13 +33,13 @@
 </form>
 
 <form action="/delete-game" method="post"><br>
-    <input type="number" placeholder="Delete game by list number" name="gameId" width="30"/>
+    <input type="text" placeholder="Delete game by name" name="gameName" width="30"/>
     <button type="submit">Delete game</button>
 </form>
 
 <form action="/edit-game" method="post"><br>
     Edit Game Information
-    <input type="number" placeholder="Edit game by list number" name="gameId" width="30"/>
+    <!--<input type="number" placeholder="Edit game by list number" name="gameId" width="30"/>-->
     <input type="text" placeholder="game name" name="gameName" width="200"/>
     <select name="gameGenre">
         <option selected disabled>Genre</option>
