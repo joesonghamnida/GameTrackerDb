@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action="logout" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+<form action="/create-game" method="post">
+    <input type="text" placeholder="game name" name="gameName" width="200"/>
+    <select name="gameGenre">
+        <option selected disabled>Genre</option>
+        <option value="rpg">RPG</option>
+        <option value="fps">FPS</option>
+        <option value="bullethell">Bullet Hell</option>
+        <option value="vn">VN</option>
+    </select>
+
+    <select name="gamePlatform">
+        <option selected disabled>Platform</option>
+        <option value="pc">PC</option>
+        <option value="ps4">PS4</option>
+        <option value="xb1">XBox 1</option>
+        <option value="wiiu">Wii U</option>
+    </select>
+
+    <input type="number" placeholder="Release Year" name="gameYear"/>
+
+    <button type="submit">Submit</button>
+</form>
+
+<form action="/delete-game" method="post"><br>
+    <input type="number" placeholder="Delete game by list number" name="gameId" width="30"/>
+    <button type="submit">Delete game</button>
+</form>
+
+<form action="/edit-game" method="post"><br>
+    Edit Game Information
+    <input type="number" placeholder="Edit game by list number" name="gameId" width="30"/>
+    <input type="text" placeholder="game name" name="gameName" width="200"/>
+    <select name="gameGenre">
+        <option selected disabled>Genre</option>
+        <option value="rpg">RPG</option>
+        <option value="fps">FPS</option>
+        <option value="bullethell">Bullet Hell</option>
+        <option value="vn">VN</option>
+    </select>
+
+    <select name="gamePlatform">
+        <option selected disabled>Platform</option>
+        <option value="pc">PC</option>
+        <option value="ps4">PS4</option>
+        <option value="xb1">XBox 1</option>
+        <option value="wiiu">Wii U</option>
+    </select>
+    <input type="number" placeholder="Release Year" name="gameYear"/>
+    <button type="submit">Edit game</button>
+
+</form>
+
+<ol>
+    {{#games}}
+    <li>{{name}} - {{genre}} - {{platform}} - {{releaseYear}}</li>
+    {{/games}}
+</ol>
+</body>
+</html>
