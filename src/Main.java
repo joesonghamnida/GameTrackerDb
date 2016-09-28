@@ -33,20 +33,15 @@ public class Main {
     public static ArrayList<Game> selectGames(Connection conn)throws SQLException{
         ArrayList<Game> gameList = new ArrayList<>();
         Statement stmt = conn.createStatement();
-
         ResultSet results = stmt.executeQuery("SELECT * FROM games");
-        while (results.next()){
 
+        while (results.next()){
             int id = results.getInt("id");
             String gameName = results.getString("text");
             String gameGenre = results.getString("genre");
             String gamePlatform = results.getString("platform");
             int releaseYear = results.getInt("release_year");
 
-            /*String gameName = results.getString("game_name");
-            String gameGenre = results.getString("game_genre");
-            String gamePlatform = results.getString("game_platform");
-            int releaseYear = results.getInt("release_year");*/
             Game game = new Game(id,gameName,gameGenre,gamePlatform,releaseYear);
             gameList.add(game);
         }
@@ -64,11 +59,6 @@ public class Main {
         stmt.setString(5,gameName);
         stmt.execute();
     }
-
-    /*public static void updateDb(Connection conn)throws SQLException{
-        PreparedStatement stmt = conn.prepareStatement("UPDATE games");
-        stmt.execute();
-    }*/
 
     static HashMap<String, User> users = new HashMap<>();
 
@@ -89,16 +79,10 @@ public class Main {
                     User user = users.get(name);
 
                     HashMap m = new HashMap();
-
-                    //update database
-                    //updateDb(conn);
-
-                    //get arraylist and pass to html
+            
                     ArrayList<Game> games = selectGames(conn);
-                    //m.put("user",user);
                     m.put("games",games);
 
-                    //check if class is null
                     if (user == null) {
                         return new ModelAndView(m, "login.html");
                     } else {
@@ -111,13 +95,12 @@ public class Main {
         Spark.post("/login",
                 ((request, response) -> {
                     String name = request.queryParams("loginName");
-                    User user = users.get(name); //look up in user list
+                    User user = users.get(name);
                     if (user == null) {
                         user = new User(name);
                         users.put(name, user);
                     }
 
-                    //these are cookies
                     Session session = request.session();
                     session.attribute("userName", name);
 
@@ -136,7 +119,6 @@ public class Main {
         Spark.post("/create-game",
                 ((request, response) -> {
 
-                    //make sure talking to same person
                     Session session = request.session();
                     String userName = session.attribute("userName");
                     User user = users.get(userName);
@@ -151,9 +133,6 @@ public class Main {
                     int gameYear = Integer.parseInt(request.queryParams("gameYear"));
 
                     insertGame(conn,gameName,gameGenre,gamePlatform,gameYear);
-
-                    //Game game = new Game(gameName, gameGenre, gamePlatform, gameYear);
-                    //user.games.add(game);
 
                     response.redirect("/");
                     return "";
